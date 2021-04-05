@@ -2,11 +2,16 @@ package com.example.servingwebcontent.controllers;
 
 import com.example.servingwebcontent.model.Message;
 import com.example.servingwebcontent.model.MessageRepo;
+import com.example.servingwebcontent.model.User;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
+import java.security.Principal;
 import java.util.Map;
 
 @Controller
@@ -28,10 +33,13 @@ public class MainController {
     }
 
     @PostMapping("/add")
-    public String add(@RequestParam String text, @RequestParam String tag){
+    public String add(
+            @AuthenticationPrincipal User user,
+            @RequestParam String text, @RequestParam String tag){
         Message m = new Message();
         m.setText(text);
         m.setTag(tag);
+        m.setAuthor(user);
         repository.save(m);
 
         return "redirect:/all";
@@ -44,8 +52,10 @@ public class MainController {
     }
 
     @GetMapping("/all")
-    public String all(Map<String, Object> model){
+    public String all(@AuthenticationPrincipal User user,Map<String, Object> model){
         model.put("messages", repository.findAll());
+        model.put("usrname", user.getName());
+
         return "/listMessages";
     }
 

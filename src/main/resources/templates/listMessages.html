@@ -6,7 +6,9 @@
 </head>
 <body>
 
-<h1 th:inline="text">Hello [[${#httpServletRequest.remoteUser}]]!</h1>
+<h1 th:inline="text">
+    <p th:text="${usrname}"></p>
+</h1>
 <form th:action="@{/logout}" method="post">
     <input type="submit" value="Sign Out"/>
 </form>
@@ -20,10 +22,12 @@
     <tr>
         <th>Text</th>
         <th>Tag</th>
+        <th>Author</th>
     </tr>
     <tr th:each="mess : ${messages}">
         <td th:text="${mess.text}"></td>
         <td th:text="${mess.tag}"></td>
+        <td th:text="${mess.getAuthorName()}"></td>
     </tr>
 
     <a href="/add">ADD</a>

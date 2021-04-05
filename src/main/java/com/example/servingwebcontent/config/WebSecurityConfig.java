@@ -1,5 +1,6 @@
 package com.example.servingwebcontent.config;
 
+import com.example.servingwebcontent.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
@@ -18,8 +19,11 @@ import javax.sql.DataSource;
 @EnableWebSecurity
 public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
-    @Autowired
-    private DataSource source;
+    private final UserService service;
+
+    public WebSecurityConfig(UserService service) {
+        this.service = service;
+    }
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {
@@ -31,15 +35,14 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .formLogin()
                     .loginPage("/login").permitAll()
                     .and()
-                .logout().permitAll();
+                .logout()
+                .permitAll();
+        http.csrf().disable();
     }
 
     @Override
     protected void configure(AuthenticationManagerBuilder auth) throws Exception {
-        auth.jdbcAuthentication()
-                .dataSource(source)
-                .passwordEncoder(NoOpPasswordEncoder.getInstance())
-                .usersByUsernameQuery("select name, password, active from usr where name=?")
-                .authoritiesByUsernameQuery("SELECT u.name, ur.role from usr u inner join user_role ur on u.id = ur.user_id where u.name=?");
+        auth.userDetailsService(service)
+                .passwordEncoder(NoOpPasswordEncoder.getInstance());
     }
 }
