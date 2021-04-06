@@ -4,14 +4,11 @@ import com.example.servingwebcontent.model.Message;
 import com.example.servingwebcontent.model.MessageRepo;
 import com.example.servingwebcontent.model.User;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.Authentication;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
-import java.security.Principal;
 import java.util.Map;
 
 @Controller
@@ -45,16 +42,11 @@ public class MainController {
         return "redirect:/all";
     }
 
-    @PostMapping("/filtered")
-    public String filter(@RequestParam String tag, Map<String, Object> model){
-        model.put("messages", repository.findByTagContains(tag));
-        return "/listMessages";
-    }
-
     @GetMapping("/all")
-    public String all(@AuthenticationPrincipal User user,Map<String, Object> model){
-        model.put("messages", repository.findAll());
+    public String all(@RequestParam(required = false, defaultValue = "") String filter, @AuthenticationPrincipal User user,Map<String, Object> model){
+        model.put("messages", repository.findByTagContains(filter));
         model.put("usrname", user.getName());
+        model.put("filter", filter);
 
         return "/listMessages";
     }
