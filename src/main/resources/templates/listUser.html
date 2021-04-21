@@ -1,0 +1,37 @@
+<!DOCTYPE HTML>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Getting Started: Serving Web Content</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+</head>
+<body>
+
+<h1 th:inline="text">
+    <p th:text="${usrname}"></p>
+</h1>
+<form th:action="@{/logout}" method="post">
+    <input type="submit" value="Sign Out"/>
+</form>
+
+<h1>User list</h1>
+<table>
+
+    <tr>
+        <th>IsActive</th>
+        <th>Nickname</th>
+        <th>Roles</th>
+        <th>Update</th>
+    </tr>
+    <tr th:each="user : ${users}">
+        <td th:text="${user.isActive()}"></td>
+        <td th:text="${user.getUsername()}"></td>
+        <td th:each="role : ${user.getRole()}">
+            <p th:text="${role.name()}"></p>
+        </td>
+        <td>
+            <a th:href="@{/user/edit/{id}(id=${user.getId()})}">update</a>
+        </td>
+    </tr>
+</table>
+</body>
+</html>
