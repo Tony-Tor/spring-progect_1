@@ -28,6 +28,9 @@
         <td th:text="${mess.text}"></td>
         <td th:text="${mess.tag}"></td>
         <td th:text="${mess.getAuthorName()}"></td>
+        <td>
+            <img th:src="@{/img/{id}(id=${mess.filename})}" th:if="${mess.filename}">
+        </td>
     </tr>
 
     <a href="/add">ADD</a>
